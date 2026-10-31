@@ -1,0 +1,23 @@
+# Virtuelle Umgebung
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Editoren / OS
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generierte Exporte
+out/
+*.svg.export

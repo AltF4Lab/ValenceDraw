@@ -1,0 +1,17 @@
+-----------------------------------------------------------------
+To do 
+-----------------------------------------------------------------
+
+noch nicht begonnen:
+(-exportmöglichkeiten für latex und co die bessere auflösung bieten als bilder)
+(-align tool für reaktionsgleichungen und mechanismen die in einer zeile stehen)
+
+-spiegeln von mit auswahlwerkzeug ausgewählte objekte
+
+-toolleiste schöner anordnen
+
+-elektronen auch an text "atom"
+
+mehrfach versucht:
+-GGW pfeilspitzen sind nicht bodenbündig an der pfeillinie
+

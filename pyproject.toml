@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valencedraw"
+version = "0.1.0"
+description = "Plattformunabhängiger 2D-Struktur-Editor (ChemDraw-MVP) auf Basis von PySide6"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "ValenceDraw" }]
+dependencies = [
+    "PySide6>=6.6",
+    "rdkit>=2024.3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-qt>=4.4",
+]
+
+[project.scripts]
+valencedraw = "valencedraw.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+qt_api = "pyside6"
