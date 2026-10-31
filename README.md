@@ -1,5 +1,7 @@
 # ValenceDraw
 
+# !!!Dieses Repo ist vollständig durch Deepseek V4.1 flash entstanden, lediglich die Ideen der Umsetzung wurden gepromptet!!! #
+
 Ein plattformunabhängiger 2D-Struktur-Editor als **native Desktop-Anwendung** (Windows, macOS,
 Linux), nicht als Web-App.
 
