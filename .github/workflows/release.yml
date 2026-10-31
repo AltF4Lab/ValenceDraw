@@ -1,0 +1,152 @@
+name: Release
+
+# Erzeugt bei jedem Tag "v*" ein GitHub-Release mit ausführbaren Builds für
+# Windows, Linux und macOS. Kann auch manuell über "Run workflow" gestartet
+# werden (dann muss ein Tag angegeben werden).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag für das Release, z. B. v0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  meta:
+    name: Version ermitteln
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Tag und Version bestimmen
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          TAG="${TAG#refs/tags/}"
+          echo "tag=$TAG"                     >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}"             >> "$GITHUB_OUTPUT"
+          echo "Baue ValenceDraw ${TAG#v} aus Tag $TAG"
+
+  build:
+    name: Build ${{ matrix.label }}
+    needs: meta
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            label: Windows x64
+            slug: windows-x64
+          # ubuntu-22.04 = älteste verfügbare glibc (2.35) -> läuft auf
+          # Ubuntu 22.04+, Linux Mint 21+, Debian 12+, Fedora 35+ usw.
+          - os: ubuntu-22.04
+            label: Linux x64
+            slug: linux-x64
+          - os: macos-15
+            label: macOS arm64 (Apple Silicon)
+            slug: macos-arm64
+          - os: macos-15-intel
+            label: macOS x64 (Intel)
+            slug: macos-x64
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Abhängigkeiten installieren
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pyinstaller
+
+      - name: Build mit PyInstaller
+        shell: bash
+        env:
+          VALENCEDRAW_VERSION: ${{ needs.meta.outputs.version }}
+        run: |
+          pyinstaller --noconfirm --clean \
+            --distpath dist --workpath build \
+            packaging/valencedraw.spec
+
+      - name: Paketieren (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $name = "ValenceDraw-${{ needs.meta.outputs.tag }}-${{ matrix.slug }}"
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          Compress-Archive -Path "dist/ValenceDraw/*" -DestinationPath "release/$name.zip"
+
+      - name: Paketieren (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          name="ValenceDraw-${{ needs.meta.outputs.tag }}-${{ matrix.slug }}"
+          mkdir -p release
+          tar -C dist -czf "release/$name.tar.gz" ValenceDraw
+
+      - name: Paketieren (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          name="ValenceDraw-${{ needs.meta.outputs.tag }}-${{ matrix.slug }}"
+          mkdir -p release
+          # ditto erhält Symlinks und Rechte im App-Bundle.
+          ditto -c -k --sequesterRsrc --keepParent "dist/ValenceDraw.app" "release/$name.zip"
+
+      - name: Zwischenergebnis hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.slug }}
+          path: release/*
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Release veröffentlichen
+    needs: [meta, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Alle Builds einsammeln
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          merge-multiple: true
+
+      - name: Übersicht anzeigen
+        run: ls -lh release
+
+      - name: Release erstellen
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.meta.outputs.tag }}
+          name: ValenceDraw ${{ needs.meta.outputs.tag }}
+          generate_release_notes: true
+          # Tags mit Bindestrich (z. B. v0.2.0-beta) werden Pre-Release.
+          prerelease: ${{ contains(needs.meta.outputs.tag, '-') }}
+          files: release/*

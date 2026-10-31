@@ -21,3 +21,8 @@ Thumbs.db
 # Generierte Exporte
 out/
 *.svg.export
+
+# Release-Builds (PyInstaller / Actions)
+release/
+dist/
+build/

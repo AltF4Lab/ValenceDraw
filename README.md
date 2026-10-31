@@ -20,6 +20,27 @@ Linux), nicht als Web-App.
 > **Kopieren/Einfügen** aller Objekte, SMILES/MOL laden & speichern,
 > SVG/PNG-Export.
 
+## Download (fertige Builds)
+
+Unter [Releases](https://github.com/AltF4Lab/ValenceDraw/releases) liegen
+fertige Pakete – Python muss dafür nicht installiert werden:
+
+| Betriebssystem | Datei | Hinweis |
+| --- | --- | --- |
+| Windows x64 | `ValenceDraw-vX.Y.Z-windows-x64.zip` | entpacken, `ValenceDraw.exe` starten (ggf. SmartScreen-Hinweis bestätigen) |
+| Linux x64 | `ValenceDraw-vX.Y.Z-linux-x64.tar.gz` | entpacken, `./ValenceDraw` starten; benötigt glibc ≥ 2.35 (Ubuntu 22.04+, Mint 21+, Debian 12+, Fedora 35+) |
+| macOS Apple Silicon | `ValenceDraw-vX.Y.Z-macos-arm64.zip` | entpacken, `ValenceDraw.app` per Rechtsklick → „Öffnen“ starten |
+| macOS Intel | `ValenceDraw-vX.Y.Z-macos-x64.zip` | dito |
+
+Die Builds sind **nicht signiert**. macOS blockiert sie beim ersten Start
+(Gatekeeper); nach dem Rechtsklick → „Öffnen“ läuft das Programm normal.
+Alternativ: `xattr -dr com.apple.quarantine ValenceDraw.app`.
+
+Die Pakete werden bei jedem Tag `v*` automatisch von
+`.github/workflows/release.yml` auf GitHub-Actions-Runnern gebaut – Windows
+und Linux über PyInstaller (`packaging/valencedraw.spec`), macOS als
+App-Bundle.
+
 ## Schnellstart
 
 ```powershell
