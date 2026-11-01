@@ -12,6 +12,10 @@ noch nicht begonnen:
 
 -elektronen auch an text "atom"
 
+-automatische Bindung an Bindungsordnung anpassen
+
+-bei element auch element hinzufügen möglichkeit oder ganzes pse
+
 mehrfach versucht:
 -GGW pfeilspitzen sind nicht bodenbündig an der pfeillinie
 
