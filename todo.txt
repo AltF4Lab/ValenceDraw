@@ -16,6 +16,11 @@ noch nicht begonnen:
 
 -bei element auch element hinzufügen möglichkeit oder ganzes pse
 
+-gestrichelte Bindungen
+
+-Schriftgröße von text und Atomen
+
+
 mehrfach versucht:
 -GGW pfeilspitzen sind nicht bodenbündig an der pfeillinie
 
