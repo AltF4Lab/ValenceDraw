@@ -20,6 +20,10 @@ noch nicht begonnen:
 
 -Schriftgröße von text und Atomen
 
+-Eckige Klammern, geschweifte Klammern
+
+- text + nicht als reagenz bzw edukt werten
+
 
 mehrfach versucht:
 -GGW pfeilspitzen sind nicht bodenbündig an der pfeillinie
